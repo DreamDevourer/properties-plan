@@ -5,16 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Calculadora de Parcelas com INCC (M-2) by Nicolas Mendes</title>
 
-  <!-- SEO -->
+  <!-- SEO & Open Graph… -->
   <meta name="description" content="Calcule o reajuste de parcelas de imóveis com base no INCC-M-2 (2 meses anteriores)." />
   <link rel="canonical" href="https://nick-incc-calc.netlify.app/" />
-
-  <!-- Open Graph -->
   <meta property="og:title" content="Calculadora INCC (M-2)" />
   <meta property="og:description" content="Reajuste de parcelas pelo INCC de 2 meses anteriores." />
   <meta property="og:type" content="website" />
 
-  <!-- JSON-LD (rich snippet) -->
+  <!-- JSON‑LD -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -26,6 +24,11 @@
   }
   </script>
 
+  <!-- AdSense -->
+  <script async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1856633904394183"
+          crossorigin="anonymous"></script>
+
   <link rel="stylesheet" href="assets/css/style.css" />
 </head>
 <body>
@@ -34,100 +37,48 @@
     <p class="subtitle">Reajuste de parcelas de imóvel usando o INCC de dois meses anteriores ao pagamento.</p>
   </header>
 
-  <!-- Google Ad Slot Top -->
+  <!-- Google Ad Top Banner -->
   <div id="ad-top" class="ad-slot container">
-    <!-- <script> //adsense </script> -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1856633904394183"
-     crossorigin="anonymous"></script>
-
-    <div class="ad-placeholder">Espaço para Anúncio Topo (728x90)</div>
+    <ins class="adsbygoogle"
+         style="display:inline-block;width:728px;height:90px"
+         data-ad-client="ca-pub-1856633904394183"
+         data-ad-slot="TOP_BANNER_SLOT_ID">
+    </ins>
+    <script>
+      (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
   </div>
 
   <main class="container">
     <section id="form-section" aria-labelledby="form-title">
-      <h2 id="form-title">Dados de Entrada</h2>
-      <form id="calc-form">
-        <div class="form-group">
-          <label for="valorTotal">Valor total do imóvel (R$)</label>
-          <input type="number" id="valorTotal" name="valorTotal" step="0.01" min="0" required value="303290" placeholder="315000" />
-        </div>
-
-        <div class="form-group">
-          <label for="entrada">Entrada (opcional) (R$)</label>
-          <input type="number" id="entrada" name="entrada" step="0.01" min="0" value="80000" placeholder="0" />
-        </div>
-
-        <div class="form-group">
-          <label for="parcelas">Número de parcelas</label>
-          <input type="number" id="parcelas" name="parcelas" min="1" step="1" required value="38" placeholder="38" />
-        </div>
-
-        <div class="form-group">
-          <label for="dataInicio">Data inicial (AAAA-MM)</label>
-          <input type="month" id="dataInicio" name="dataInicio" value="2025-07" required />
-        </div>
-
-        <div class="form-actions">
-          <button type="submit" id="btnCalcular">Calcular</button>
-          <button type="button" id="btnLimpar" class="secondary">Limpar</button>
-        </div>
-
-        <details class="advanced">
-          <summary>Avançado</summary>
-          <div class="form-group">
-            <label for="moeda">Moeda</label>
-            <select id="moeda" name="moeda">
-              <option value="BRL" selected>R$ Real</option>
-              <option value="USD">US$ Dólar</option>
-              <option value="EUR">€ Euro</option>
-            </select>
-          </div>
-
-          <div class="form-group" style="display: none;">
-            <label for="modoExibicao">Modo de exibição</label>
-            <select id="modoExibicao" name="modoExibicao">
-              <option value="detalhado" selected>Detalhado</option>
-              <option value="resumo">Resumo</option>
-            </select>
-          </div>
-        </details>
-      </form>
     </section>
 
-    <!-- Google Ad Slot Sidebar -->
+    <!-- Google Ad Sidebar -->
     <aside id="ad-sidebar" class="ad-slot">
-      <div class="ad-placeholder">Espaço para Anúncio Lateral (300x600)</div>
+      <ins class="adsbygoogle"
+           style="display:inline-block;width:300px;height:600px"
+           data-ad-client="ca-pub-1856633904394183"
+           data-ad-slot="SIDEBAR_SLOT_ID">
+      </ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
     </aside>
 
     <section id="result-section" aria-labelledby="result-title" class="hidden">
-      <h2 id="result-title">Resultados</h2>
 
-      <div class="result-actions">
-        <button id="btnExportCSV" class="secondary">Exportar CSV</button>
-        <button id="btnPrint" class="secondary">Imprimir</button>
-      </div>
-
-      <!-- Tabela horizontalmente rolável -->
-      <div class="table-wrapper">
-        <table id="result-table" aria-describedby="result-title">
-          <thead>
-            <tr>
-              <th># Parcela</th>
-              <th>Mês Pagamento</th>
-              <th>Valor Base (R$)</th>
-              <th>INCC Ref (M-2)</th>
-              <th>Valor Ajustado (R$)</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- preenchido via JS -->
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Ad entre seções da tabela -->
+      <!-- Ad table -->
       <div class="ad-in-table ad-slot">
-        <div class="ad-placeholder">Espaço para Anúncio Entre Tabela</div>
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-1856633904394183"
+             data-ad-slot="IN_TABLE_SLOT_ID"
+             data-ad-format="auto"
+             data-full-width-responsive="true">
+        </ins>
+        <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
       </div>
     </section>
   </main>
@@ -136,7 +87,7 @@
     <p>© <span id="year"></span> Calculadora INCC (M-2) by Nicolas Mendes (Capital Fox)</p>
   </footer>
 
-<script src="assets/js/utils.js" type="module"></script>
-<script src="assets/js/app.js" type="module"></script>
+  <script src="assets/js/utils.js" type="module"></script>
+  <script src="assets/js/app.js" type="module"></script>
 </body>
 </html>
