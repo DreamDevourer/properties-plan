@@ -12,6 +12,7 @@ import {
 
   // Referências ao DOM
   const form = document.getElementById("calc-form");
+  const btnCalcular = document.getElementById("btnCalcular");
   const resultSection = document.getElementById("result-section");
   const resultTableBody = document.querySelector("#result-table tbody");
   const yearSpan = document.getElementById("year");
@@ -19,24 +20,37 @@ import {
   const btnPrint = document.getElementById("btnPrint");
   const btnLimpar = document.getElementById("btnLimpar");
 
-  // Carrega os dados de INCC da tabela externa
+  // Desabilita o botão até o INCC ser carregado
+  btnCalcular.disabled = true;
+  btnCalcular.textContent = "Carregando INCC...";
+
+  // Carrega dados de INCC via tabela externa
   let inccData = {};
   try {
     inccData = await fetchInccFromTabela();
     console.log("INCC carregado:", inccData);
   } catch (err) {
-    console.error("Erro ao carregar INCC:", err);
-    inccData = {};
+    console.error("Falha ao carregar INCC:", err);
+    alert(
+      "Não foi possível carregar dados do INCC. A aplicação continuará, mas sem ajustes."
+    );
+  } finally {
+    btnCalcular.disabled = false;
+    btnCalcular.textContent = "Calcular";
   }
 
-  // Define o ano atual no rodapé
+  // Insere ano atual no rodapé
   yearSpan.textContent = new Date().getFullYear();
 
-  let lastResults = []; // guarda array de resultados para exportar
+  let lastResults = []; // guarda resultados para CSV
 
-  // Listeners do formulário e botões
+  // Listeners
   form.addEventListener("submit", (e) => {
     e.preventDefault();
+    if (btnCalcular.disabled) {
+      alert("Aguarde, dados do INCC ainda estão sendo carregados.");
+      return;
+    }
     calcular();
   });
 
@@ -64,7 +78,6 @@ import {
     const moeda = form.moeda.value;
     const modoExibicao = form.modoExibicao.value;
 
-    // Validações básicas
     if (isNaN(valorTotal) || isNaN(parcelas) || !dataInicio) {
       alert("Preencha os campos obrigatórios.");
       return;
@@ -115,7 +128,7 @@ import {
       tdParcela.textContent = row.parcela;
       tr.appendChild(tdParcela);
 
-      // Mês de Pagamento
+      // Mês Pagamento
       const tdMes = document.createElement("td");
       tdMes.textContent = row.mesPagamento;
       tr.appendChild(tdMes);
@@ -132,7 +145,7 @@ import {
           row.inccM2 != null ? (row.inccM2 * 100).toFixed(2) + "%" : "--";
         tr.appendChild(tdIncc);
       } else {
-        // Modo resumo: unifica colunas de valor base
+        // Modo resumo
         const tdBaseResumo = document.createElement("td");
         tdBaseResumo.textContent = formatCurrency(row.valorBase, currency);
         tdBaseResumo.colSpan = 2;

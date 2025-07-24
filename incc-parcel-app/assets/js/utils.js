@@ -60,17 +60,37 @@ export function downloadFile(
 }
 
 /**
- * Busca o HTML da página de INCC e extrai os valores Mês → INCC (decimal).
- * Retorna um objeto { "2025-06": 0.0096, "2025-05": 0.0026, ... }
+ * Tenta buscar a página via uma lista de proxies CORS-friendly.
+ * Se todos falharem, lança erro.
  */
 export async function fetchInccFromTabela() {
-  const proxy = "https://api.allorigins.win/raw?url=";
-  const url = encodeURIComponent(
-    "https://www.dadosdemercado.com.br/indices/incc-m"
-  );
-  const resp = await fetch(proxy + url, { mode: "cors" });
-  if (!resp.ok) throw new Error("Falha ao baixar INCC: " + resp.status);
-  const html = await resp.text();
+  const target = "https://www.dadosdemercado.com.br/indices/incc-m";
+  const proxies = [
+    "https://api.allorigins.win/raw?url=",
+    "https://cors.bridged.cc/",
+    "https://api.codetabs.com/v1/proxy?quest=",
+  ];
+
+  let html = null;
+  for (const proxy of proxies) {
+    try {
+      const resp = await fetch(proxy + encodeURIComponent(target));
+      if (resp.ok) {
+        html = await resp.text();
+        console.log(`INCC carregado via proxy: ${proxy}`);
+        break;
+      }
+      console.warn(`Proxy ${proxy} retornou status ${resp.status}`);
+    } catch (err) {
+      console.warn(`Falha no proxy ${proxy}:`, err.message);
+    }
+  }
+
+  if (!html) {
+    throw new Error("Não foi possível carregar INCC via nenhum proxy.");
+  }
+
+  // --- parsing HTML em Document ---
   const doc = new DOMParser().parseFromString(html, "text/html");
   const rows = doc.querySelectorAll(".table-container.high tbody tr");
   const MES_MAP = {
@@ -87,14 +107,15 @@ export async function fetchInccFromTabela() {
     Nov: "11",
     Dez: "12",
   };
+
   const data = {};
   rows.forEach((tr) => {
-    const cells = tr.querySelectorAll("td");
-    const [monAbbrev, year] = cells[0].textContent.trim().split("/");
+    const [monAbbrev, year] = tr.children[0].textContent.trim().split("/");
     const key = `${year}-${MES_MAP[monAbbrev]}`;
     const percentual =
-      parseFloat(cells[1].textContent.trim().replace(",", ".")) / 100;
+      parseFloat(tr.children[1].textContent.replace(",", ".")) / 100;
     data[key] = percentual;
   });
+
   return data;
 }
