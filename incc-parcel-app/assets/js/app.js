@@ -7,8 +7,61 @@ import {
   fetchInccFromTabela,
 } from "./utils.js";
 
+/**
+ * Detecta bloqueador de anúncios criando elemento "bait" com classe comum de AdSense e verificando se foi removido ou ocultado.
+ * @returns {Promise<boolean>} true se adblock detectado
+ */
+function detectAdBlock() {
+  return new Promise((resolve) => {
+    // Cria bait similar a elemento do AdSense
+    const bait = document.createElement("ins");
+    bait.className = "adsbygoogle";
+    bait.style.cssText = "position:absolute;top:-999px;";
+    document.body.appendChild(bait);
+
+    window.setTimeout(() => {
+      // Se o adblock removeu ou escondeu o elemento
+      const computed = getComputedStyle(bait);
+      const blocked =
+        !document.body.contains(bait) ||
+        computed.display === "none" ||
+        bait.offsetParent === null ||
+        bait.clientHeight === 0;
+      if (document.body.contains(bait)) document.body.removeChild(bait);
+      resolve(blocked);
+    }, 100);
+  });
+}
+
 (async function () {
   "use strict";
+
+  // Detecta AdBlock e aplica aviso e oculta banners
+  if (await detectAdBlock()) {
+    console.warn("AdBlock detectado");
+    // Mensagem não invasiva
+    const msg = document.createElement("div");
+    msg.id = "adblock-message";
+    msg.textContent =
+      "Olá! Percebi que você está usando um Adblock, eu sei como anúncios são um saco! Mas para continuar atualizando e fazendo mais projetos assim com dedicação e amor, preciso ganhar com anúncios, então por favor se puder desabilitar seu Adblock só por aqui, ficarei muito feliz :)";
+    msg.style.cssText =
+      "background: #fff3cd; " +
+      "color: #856404; " +
+      "border: 1px solid #ffeeba; " +
+      "padding: 1rem; " +
+      "font-size: 0.9rem; " +
+      "margin: 1rem 0; " +
+      "border-radius: 8px;";
+    // Exibe antes do form
+    const main = document.querySelector("main.container") || document.body;
+    main.prepend(msg);
+    // Oculta áreas de anúncio
+    document
+      .querySelectorAll("#ad-top, #ad-sidebar, .ad-in-table")
+      .forEach((el) => {
+        el.style.display = "none";
+      });
+  }
 
   // Referências ao DOM
   const form = document.getElementById("calc-form");
